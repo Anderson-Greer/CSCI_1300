@@ -6,8 +6,6 @@
 #include <string>
 #include <fstream>
 #include "Buffchat.h"
-#include "Post.cpp"
-#include "User.cpp"
 
 using namespace std;
 
