@@ -7,8 +7,8 @@
 #include <iostream>
 #include <cassert>
 #include <string>
-#include "User.h"
-#include "Post.h"
+#include "User.cpp"
+#include "Post.cpp"
 
 using namespace std;
 

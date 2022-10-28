@@ -4,7 +4,10 @@
 // Project 2 Part 1 - Problem 1
 
 #include <string>
+#include <fstream>
 #include "Buffchat.h"
+#include "Post.cpp"
+#include "User.cpp"
 
 using namespace std;
 
@@ -22,7 +25,7 @@ int Buffchat::getUserSize() {
 }
 
 int Buffchat::getNumPosts() {
-    return num_posts;
+    return num_posts_;
 }
 
 int Buffchat::getNumUsers() {
@@ -66,14 +69,14 @@ int Buffchat::readPosts(string file_name) {
         return -2;
 
     ifstream fin(file_name);
-    int count = num_posts_stored;
+    int count = num_posts_;
     string line;
     string lineArr[4];
 
     if(fin.fail())
         return -1;
 
-    for(int i = num_post_; i < posts_size_; i++) {
+    for(int i = num_posts_; i < posts_size_; i++) {
         if(getline(fin, line)) {
             if(line != "" && split(line, ',', lineArr, 4) == 4) {
                 Post post(lineArr[0], lineArr[1], stoi(lineArr[2]), lineArr[3]);
@@ -92,18 +95,18 @@ int Buffchat::readPosts(string file_name) {
     return count;
 }
 
-void Buffchat::printPostsByYear(string);
+// void Buffchat::printPostsByYear(string);
 
-int Buffchat::readLikes(string);
+// int Buffchat::readLikes(string);
 
-int Buffchat::getLikes(string, string);
+// int Buffchat::getLikes(string, string);
 
-void Buffchat::findTagUser(string);
+// void Buffchat::findTagUser(string);
 
-bool Buffchat::addPost(string, string, string);
+// bool Buffchat::addPost(string, string, string);
 
-void Buffchat::printPopularPosts(int, string);
+// void Buffchat::printPopularPosts(int, string);
 
-User Buffchat::findLeastActiveUser();
+// User Buffchat::findLeastActiveUser();
 
-int Buffchat::countUniqueLikes(string);
+// int Buffchat::countUniqueLikes(string);

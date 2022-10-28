@@ -7,6 +7,8 @@
 #define BUFFCHAT_H
 
 #include <string>
+#include "Post.cpp"
+#include "User.cpp"
 
 using namespace std;
 
