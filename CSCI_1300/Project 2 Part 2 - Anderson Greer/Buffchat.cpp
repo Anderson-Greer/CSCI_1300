@@ -30,7 +30,7 @@ int Buffchat::getNumUsers() {
     return num_users_;
 }
 
-int split(string input_string, char separator, string arr[], int arr_size) {
+int Buffchat::split(string input_string, char separator, string arr[], int arr_size) {
     if(input_string.length() == 0)
         return 0;
         
@@ -61,7 +61,6 @@ int split(string input_string, char separator, string arr[], int arr_size) {
  * 5. Create new post object with each non-empty file line
  * 6. Return the new number of elements in the posts array
 */
-
 int Buffchat::readPosts(string file_name) {
     if(num_posts_ >= posts_size_)
         return -2;
