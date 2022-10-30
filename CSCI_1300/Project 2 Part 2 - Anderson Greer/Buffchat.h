@@ -7,17 +7,17 @@
 #define BUFFCHAT_H
 
 #include <string>
-#include "Post.cpp"
-#include "User.cpp"
+#include "Post.h"
+#include "User.h"
 
 using namespace std;
 
 class Buffchat {
     private:
-        const static int posts_size_;
-        const static int users_size_;
-        Post posts_[];
-        User users_[];
+        const static int posts_size_ = 50;
+        const static int users_size_ = 50;
+        Post posts_[posts_size_];
+        User users_[users_size_];
         int num_posts_;
         int num_users_;
 
@@ -37,6 +37,7 @@ class Buffchat {
         void printPopularPosts(int, string);
         User findLeastActiveUser();
         int countUniqueLikes(string);
+        int split(string, char, string[], int);
 };
 
 #endif
