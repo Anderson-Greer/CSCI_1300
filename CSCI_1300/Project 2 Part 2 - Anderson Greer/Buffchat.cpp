@@ -264,19 +264,108 @@ bool Buffchat::addPost(string post_body, string post_author, string date) {
     
     Post post(post_body, post_author, 0, date);
     posts_[num_posts_] = post;
+    for(int i = 0; i < num_users_; i++) {
+        users_[i].setLikesAt(num_posts_, -1);
+    }
     num_posts_++;
     return true;
 }
 
 void Buffchat::printPopularPosts(int count, string year) {
+    if(num_posts_ == 0) {
+        cout << "No posts are stored";
+        return;
+    }
+    
+    Post validPosts[count];
+    int num_valid_posts = 0;
+    int leastIndex = 0;
 
+    for(int i = 0; i < num_posts_; i++) {
+        if(posts_[i].getPostDate().substr(6, 2) == year) {
+            if(num_valid_posts < count) {
+                validPosts[num_valid_posts] = posts_[i];
+                num_valid_posts++;
+            }
+            else if(num_valid_posts == count) {
+                for(int j = 0; j < count; j++) {
+                    if(validPosts[leastIndex].getPostLikes() > validPosts[j].getPostLikes()) {
+                        leastIndex = j;
+                    }
+                }
+                
+                if(validPosts[leastIndex].getPostLikes() < posts_[i].getPostLikes()) {
+                    for(int j = leastIndex; j < count - 1; j++) {
+                        validPosts[j] = validPosts[j + 1];
+                    } 
+
+                    validPosts[count - 1] = posts_[i];
+                }
+            }
+        }
+    }
+
+    if(num_valid_posts == 0)
+        cout << "No posts stored for year " << year << endl;
+    else if(num_valid_posts == count) {
+        cout << "Top " << count << " posts for year " << year << endl;
+        for(int i = 0; i < num_valid_posts; i++) {
+            cout << validPosts[i].getPostLikes() << " likes: " << validPosts[i].getPostBody() << endl;
+        }
+    }
+    else if(num_valid_posts < count) {
+        cout << "There are fewer than " << count << " posts for year " << year << ". Top " << num_valid_posts << " posts for year " << year << endl;
+        for(int i = 0; i < num_valid_posts; i++) {
+            cout << validPosts[i].getPostLikes() << " likes: " << validPosts[i].getPostBody() << endl;
+        }
+    }
 }
 
 User Buffchat::findLeastActiveUser() {
-    User user;
-    return user;
+    if(num_users_ <= 0) {
+        return User();
+    }
+
+    int lowestLikes = 0;
+    int count = 0;
+    int leastActiveIndex = -1;
+    
+    for(int i = 0; i < num_users_; i++) {
+        count = 0;
+        for(int j = 0; j < num_posts_; j++) {
+            if(users_[i].getLikesAt(j) == -1) {
+                count++;
+            }
+        }
+        if(count > lowestLikes) {
+            lowestLikes = count;
+            leastActiveIndex = i;
+        }
+    }
+    
+    return users_[leastActiveIndex];
 }
 
 int Buffchat::countUniqueLikes(string post_author) {
-    return 0;
+    if(num_posts_ <= 0 || num_users_ == 0)
+        return -2;
+    
+    int count = 0;
+    int views = 0;
+
+    for(int i = 0; i < num_posts_; i++) {
+          if(posts_[i].getPostAuthor() == post_author) {
+            for(int j = 0; j < num_users_; j++) {
+                if(users_[j].getLikesAt(i) > 0)
+                    count++;
+                else if(users_[j].getLikesAt(i) >= 0)
+                    views++;
+            }
+          }            
+    }
+
+    if(views == 0)
+        return -1;
+
+    return count;
 }
