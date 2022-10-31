@@ -69,7 +69,6 @@ int Buffchat::readPosts(string file_name) {
         return -2;
 
     ifstream fin(file_name);
-    int count = num_posts_;
     string line;
     string lineArr[4];
 
@@ -82,7 +81,7 @@ int Buffchat::readPosts(string file_name) {
                 Post post(lineArr[0], lineArr[1], stoi(lineArr[2]), lineArr[3]);
                 posts_[i] = post;
                 
-                count++;
+                num_posts_++;
             }
             else
                 i--;
@@ -92,8 +91,7 @@ int Buffchat::readPosts(string file_name) {
 
     fin.close();
 
-    num_posts_ = count;
-    return count;
+    return num_posts_;
 }
 
 /*Algorithm
@@ -258,22 +256,39 @@ void Buffchat::findTagUser(string username_tag) {
     }
 }
 
+/* Algorithm
+ * 1. Take in post body, author, and date as parameters
+ * 2. If the number of posts is the same as the size of the array, return false
+ * 3. Create a new post object using the parameters and store it at the first open location in the posts_ array
+ * 4. Loop through each user object in the users_ array and set the likes for the new post to -1
+ * 5. Increase the number of posts by one
+ * 6. Return true
+*/
 bool Buffchat::addPost(string post_body, string post_author, string date) {
     if(num_posts_ == posts_size_)
         return false;
     
     Post post(post_body, post_author, 0, date);
     posts_[num_posts_] = post;
-    for(int i = 0; i < num_users_; i++) {
+    for(int i = 0; i < num_users_; i++) { // loop through users_ array
         users_[i].setLikesAt(num_posts_, -1);
     }
     num_posts_++;
     return true;
 }
 
+/* Algorithm
+ * 1. Take in the number of posts to be printed and desired year as parameters
+ * 2. Print no posts stored if there are none stored
+ * 3. Loop through the posts_ array and if the post has the correct year and count posts have not been found, store it in a new array
+ * 4. If there are already count posts in the array, compare the post's number of likes to the number of likes of the other post objects in the new array
+ * 5. If the post has more likes than the post with the least number of likes in the new array, take out the post with least likes and shift everything below it up an index
+ * 6. Insert post object at the end of the new array
+ * 7. Print the top count posts
+*/
 void Buffchat::printPopularPosts(int count, string year) {
     if(num_posts_ == 0) {
-        cout << "No posts are stored";
+        cout << "No posts are stored" << endl;
         return;
     }
     
@@ -282,38 +297,38 @@ void Buffchat::printPopularPosts(int count, string year) {
     int leastIndex = 0;
 
     for(int i = 0; i < num_posts_; i++) {
-        if(posts_[i].getPostDate().substr(6, 2) == year) {
-            if(num_valid_posts < count) {
+        if(posts_[i].getPostDate().substr(6, 2) == year) { // if post's year matches desired year
+            if(num_valid_posts < count) { // new array is not filled
                 validPosts[num_valid_posts] = posts_[i];
                 num_valid_posts++;
             }
-            else if(num_valid_posts == count) {
+            else if(num_valid_posts == count) { // new array is filled
                 for(int j = 0; j < count; j++) {
-                    if(validPosts[leastIndex].getPostLikes() > validPosts[j].getPostLikes()) {
+                    if(validPosts[leastIndex].getPostLikes() > validPosts[j].getPostLikes()) { // finds the post with the least number of likes
                         leastIndex = j;
                     }
                 }
                 
-                if(validPosts[leastIndex].getPostLikes() < posts_[i].getPostLikes()) {
-                    for(int j = leastIndex; j < count - 1; j++) {
+                if(validPosts[leastIndex].getPostLikes() < posts_[i].getPostLikes()) { // post has more likes than the post with least likes in new array
+                    for(int j = leastIndex; j < count - 1; j++) { // remove post in new array with least likes, shift everything below it up one
                         validPosts[j] = validPosts[j + 1];
                     } 
 
-                    validPosts[count - 1] = posts_[i];
+                    validPosts[count - 1] = posts_[i]; // insert post at end of new array
                 }
             }
         }
     }
 
-    if(num_valid_posts == 0)
+    if(num_valid_posts == 0) // new array had no elements
         cout << "No posts stored for year " << year << endl;
-    else if(num_valid_posts == count) {
+    else if(num_valid_posts == count) { // new array was filled
         cout << "Top " << count << " posts for year " << year << endl;
         for(int i = 0; i < num_valid_posts; i++) {
             cout << validPosts[i].getPostLikes() << " likes: " << validPosts[i].getPostBody() << endl;
         }
     }
-    else if(num_valid_posts < count) {
+    else if(num_valid_posts < count) { // new array was not filled but has elements
         cout << "There are fewer than " << count << " posts for year " << year << ". Top " << num_valid_posts << " posts for year " << year << endl;
         for(int i = 0; i < num_valid_posts; i++) {
             cout << validPosts[i].getPostLikes() << " likes: " << validPosts[i].getPostBody() << endl;
@@ -321,6 +336,14 @@ void Buffchat::printPopularPosts(int count, string year) {
     }
 }
 
+/* Algorithm
+ * 1. Return empty user if there are no users stored in users_
+ * 2. Loop through users_ array and loop through each user's likes array
+ * 3. Increment a count variable if any like is -1
+ * 4. Compare user's count to a lowest likes variable that stores the least number likes from one user
+ * 5. If count > least likes, that user becomes the least active user
+ * 6. Return whichever user is least active after the first for loop finishes
+*/
 User Buffchat::findLeastActiveUser() {
     if(num_users_ <= 0) {
         return User();
@@ -330,22 +353,30 @@ User Buffchat::findLeastActiveUser() {
     int count = 0;
     int leastActiveIndex = -1;
     
-    for(int i = 0; i < num_users_; i++) {
+    for(int i = 0; i < num_users_; i++) { // loop through users_ array
         count = 0;
-        for(int j = 0; j < num_posts_; j++) {
-            if(users_[i].getLikesAt(j) == -1) {
+        for(int j = 0; j < num_posts_; j++) { // loop through posts_ array
+            if(users_[i].getLikesAt(j) == -1) { // user did not view post
                 count++;
             }
         }
-        if(count > lowestLikes) {
+        if(count > lowestLikes) { // checks to see if current user is least active
             lowestLikes = count;
             leastActiveIndex = i;
         }
     }
     
-    return users_[leastActiveIndex];
+    return users_[leastActiveIndex]; // return least active user
 }
 
+/* Algorithm
+ * 1. Take in an author as a parameter
+ * 2. If either posts_ or users_ array is emtpy, return -2
+ * 3. Loop through the posts_ array and if the post's author is desired author: loop through each user in users_ and check if the user has viewed/liked the post
+ * 4. If the user has liked the post, increment count variable by one, if they have viewed but not liked it, increment views variable by one
+ * 5. If views == 0, return -1
+ * 6. Return the total number of unique likes stored in count variable
+*/
 int Buffchat::countUniqueLikes(string post_author) {
     if(num_posts_ <= 0 || num_users_ == 0)
         return -2;
@@ -353,12 +384,12 @@ int Buffchat::countUniqueLikes(string post_author) {
     int count = 0;
     int views = 0;
 
-    for(int i = 0; i < num_posts_; i++) {
-          if(posts_[i].getPostAuthor() == post_author) {
-            for(int j = 0; j < num_users_; j++) {
-                if(users_[j].getLikesAt(i) > 0)
+    for(int i = 0; i < num_posts_; i++) { // loop through posts_ array
+          if(posts_[i].getPostAuthor() == post_author) { // if post is by desired author
+            for(int j = 0; j < num_users_; j++) { // loop through users_ array
+                if(users_[j].getLikesAt(i) > 0) // if user liked post
                     count++;
-                else if(users_[j].getLikesAt(i) >= 0)
+                else if(users_[j].getLikesAt(i) >= 0) // if user viewed but did not like post
                     views++;
             }
           }            
@@ -367,5 +398,5 @@ int Buffchat::countUniqueLikes(string post_author) {
     if(views == 0)
         return -1;
 
-    return count;
+    return count; // return the number of unique likes
 }
