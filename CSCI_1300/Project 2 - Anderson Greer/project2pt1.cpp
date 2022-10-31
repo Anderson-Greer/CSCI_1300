@@ -245,7 +245,7 @@ int main() {
             case 2: // user entered 2
             {
                 string year;
-                cout << "Enter the year(YY):" << endl; // prompt user for yera
+                cout << "Enter the year(YY):" << endl; // prompt user for year
                 cin >> year;
                 printPostsByYear(posts, year, posts_stored); // print the posts for that year
                 break;
