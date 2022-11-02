@@ -1,10 +1,13 @@
+// Recitation 10
+// October 31 2022
+
 #include <iostream>
 #include <vector>
 
 using namespace std;
 
-vector<float> storeFloats() {
-    vector<float> vec;
+vector <float> storeFloats() {
+    vector <float> vec;
 
     for(int i = 0; i < 15; i++) {
         float num;
@@ -38,9 +41,7 @@ vector<float> removeAboveAverage(vector<float> vec, float average) {
 }
 
 int main() {
-    vector<float> ex;
-
-    ex = storeFloats();
+    vector<float> ex = storeFloats();
 
     cout << "Values in vector:" << endl;
     for(int i = 0; i < ex.size(); i++) {
@@ -50,10 +51,9 @@ int main() {
     float average = averageVal(ex);
     cout << "Average value: " << average << endl;
 
-    vector<float> ex1;
+    vector<float> ex1 = removeAboveAverage(ex, average);
 
     cout << "Vector after removing above average values: " << endl;
-    ex1 = removeAboveAverage(ex, average);
     for(int i = 0; i < ex1.size(); i++) {
         cout << ex1.at(i) << ", ";
     }
