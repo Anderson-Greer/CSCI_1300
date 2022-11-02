@@ -59,4 +59,6 @@ int main() {
     vector<int> vect5{10, 20, 30, 40, 50};
     start_index = 1, end_index = 6;
     assert(sumElements(vect5, start_index, end_index) == -2);
+
+    return 0;
 }
